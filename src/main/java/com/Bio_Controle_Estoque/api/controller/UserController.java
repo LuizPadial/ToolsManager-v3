@@ -42,7 +42,7 @@ public class UserController {
         return userService.save(user);
     }
 
-    @PutMapping("/registration/{registration}")
+    @PutMapping("/atualizar/{registration}")
     public ResponseEntity<User> atualizarPorRegistration(@PathVariable String registration, @RequestBody User user) {
         Optional<User> usuarioAtualizado = userService.atualizarUsuarioPorRegistration(registration, user);
         return usuarioAtualizado.map(ResponseEntity::ok)

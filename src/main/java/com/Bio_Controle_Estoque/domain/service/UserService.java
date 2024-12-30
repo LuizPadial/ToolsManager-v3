@@ -92,7 +92,6 @@ public class UserService {
             user.setUsername(userAtualizado.getUsername());
             user.setPassword(userAtualizado.getPassword());
             user.setBiometricData(userAtualizado.getBiometricData());
-            user.setManager(userAtualizado.isManager());
             return userRepository.save(user);
         });
     }
