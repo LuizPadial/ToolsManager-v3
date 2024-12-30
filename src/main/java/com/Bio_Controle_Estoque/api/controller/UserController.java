@@ -42,6 +42,13 @@ public class UserController {
         return userService.save(user);
     }
 
+    @PutMapping("/registration/{registration}")
+    public ResponseEntity<User> atualizarPorRegistration(@PathVariable String registration, @RequestBody User user) {
+        Optional<User> usuarioAtualizado = userService.atualizarUsuarioPorRegistration(registration, user);
+        return usuarioAtualizado.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
     @PutMapping("/{userId}")
     public ResponseEntity<User> atualizar(@PathVariable Long userId, @RequestBody User user) {
         Optional<User> usuarioAtualizado = userService.atualizarUsuario(userId, user);

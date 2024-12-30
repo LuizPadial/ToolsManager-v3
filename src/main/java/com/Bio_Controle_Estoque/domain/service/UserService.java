@@ -29,28 +29,13 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public List<User> buscarPorNomeOuMatricula(String query) {
-        return userRepository.findByNameContainingOrRegistrationContaining(query, query);
-    }
-
     public List<User> buscarPorMatricula(String registration) {
         // Busca no campo de matrícula
         return userRepository.findByRegistrationContainingIgnoreCase(registration);
     }
-
     public User getByUsername(String username){
         return userRepository.findByUsername(username);
     }
-
-//    @Transactional
-//    public User save(User user) {
-//        var possibleUser = getByUsername(user.getUsername());
-//        if(possibleUser != null){
-//        throw new DuplicatedTupleException("User alread existis!");
-//        }
-//        encodePassword(user);
-//        return userRepository.save(user);
-//    }
 
     @Transactional
     public User save(User user) {
@@ -59,17 +44,28 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public AcessToken authenticate(String username, String password){
+    public AcessToken authenticate(String username, String password) {
         var user = getByUsername(username);
-        if(user == null){
-            return null;
+
+        if (user == null) {
+            return null;  // Se não encontrar o usuário, retorna null
         }
+
         boolean matches = passwordEncoder.matches(password, user.getPassword());
-        if (matches){
+
+        if (matches) {
+            // Verifica se o usuário é um manager
+            if (!user.isManager()) {
+                return null;  // Se não for manager, retorna null
+            }
+
+            // Gera o token caso seja manager
             return jwtService.generateToken(user);
         }
-        return null;
+
+        return null;  // Se a senha não bater, retorna null
     }
+
 
     private void encodePassword(User user){
         String rawPassword = user.getPassword();
@@ -89,11 +85,30 @@ public class UserService {
         });
     }
 
+    public Optional<User> atualizarUsuarioPorRegistration(String registration, User userAtualizado) {
+        return userRepository.findByRegistration(registration).map(user -> {
+            user.setName(userAtualizado.getName());
+            user.setRegistration(userAtualizado.getRegistration());
+            user.setUsername(userAtualizado.getUsername());
+            user.setPassword(userAtualizado.getPassword());
+            user.setBiometricData(userAtualizado.getBiometricData());
+            user.setManager(userAtualizado.isManager());
+            return userRepository.save(user);
+        });
+    }
+
+
     public boolean deletarUsuario(Long id) {
         return userRepository.findById(id).map(user -> {
             userRepository.delete(user);
             return true;
         }).orElse(false);
     }
+
+    public Optional<User> buscarPorMatriculaUnico(String registration) {
+        List<User> users = buscarPorMatricula(registration);
+        return users.isEmpty() ? Optional.empty() : Optional.of(users.get(0));
+    }
+
 
 }
