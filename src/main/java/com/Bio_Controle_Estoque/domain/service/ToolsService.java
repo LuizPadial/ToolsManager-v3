@@ -40,9 +40,11 @@ public class ToolsService {
         return toolsRepository.findById(id).map(tools -> {
             tools.setName(toolsAtualizado.getName());
             tools.setDescription(toolsAtualizado.getDescription());
+            tools.setAvailable(toolsAtualizado.getAvailable());
             return toolsRepository.save(tools);
         });
     }
+
 
     public boolean deletarFerramenta(Long id) {
         return toolsRepository.findById(id).map(tools -> {

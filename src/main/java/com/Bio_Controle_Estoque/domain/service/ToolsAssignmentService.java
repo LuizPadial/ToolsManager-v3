@@ -34,7 +34,7 @@ public class ToolsAssignmentService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Ferramenta não encontrada"));
 
         // Verificar se a ferramenta já está emprestada
-        if (!tool.isAvailable()) {
+        if (!tool.getAvailable()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Ferramenta já emprestada");
         }
 

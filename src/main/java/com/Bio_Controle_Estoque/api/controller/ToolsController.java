@@ -22,7 +22,7 @@ public class ToolsController {
         return ToolsService.listarFerramentas();
     }
 
-    @GetMapping("/search")
+    @GetMapping("/nome")
     public ResponseEntity<List<Tools>> buscarPorNomeOuCodigo(@RequestParam String query) {
         List<Tools> Toolss = ToolsService.buscarPorNomeOuCodigo(query);
 
@@ -39,8 +39,8 @@ public class ToolsController {
 
     @PutMapping("/{ToolsId}")
     public ResponseEntity<Tools> atualizar(@PathVariable Long ToolsId, @RequestBody Tools Tools) {
-        Optional<Tools> usuarioAtualizado = ToolsService.atualizarFerramenta(ToolsId, Tools);
-        return usuarioAtualizado.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        Optional<Tools> ferramentaAtualizada = ToolsService.atualizarFerramenta(ToolsId, Tools);
+        return ferramentaAtualizada.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
     @PutMapping("/status/{ToolsId}")
     public ResponseEntity<Tools> atualizarDisponibilidade(@PathVariable Long ToolsId, @RequestBody ToolAvailabilityDTO toolAvailabilityDTO) {
@@ -50,7 +50,6 @@ public class ToolsController {
         Optional<Tools> updatedTool = ToolsService.updateAvailability(ToolsId, toolAvailabilityDTO);
         return updatedTool.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
-
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
